@@ -1,3 +1,3 @@
 # Mihir Yerande's Website
 
-*mihiryerande.xyz*
+*https://mihiryerande.xyz*

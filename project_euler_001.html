@@ -15,6 +15,8 @@
 		<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
 		<link rel="manifest" href="assets/favicon/site.webmanifest">
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 	</head>
 	<body class="no-sidebar is-preload">
 		<div id="page-wrapper">
@@ -56,7 +58,7 @@
 								<li><a href="right-sidebar.html">Right Sidebar</a></li>
 								<li><a href="no-sidebar.html">No Sidebar</a></li> -->
 								<li><a href="projects_main.html">Projects</a></li>
-                                <li><a href="project_euler_main.html">Project Euler</a></li>
+								<li><a href="project_euler_main.html">Project Euler</a></li>
 								<li><a href="resume_mihiryerande.pdf" target="_blank">Résumé</a></li>
 							</ul>
 						</nav>
@@ -69,26 +71,83 @@
 					<div class="container">
 						<article id="main" class="special">
 							<header>
-								<h2><a href="#">Project Euler</a></h2>
-								<p>
-									My answers (with explanation) to <a href="https://projecteuler.net/">Project Euler</a> problems!
-								</p>
+								<h2><a href="project_euler_main.html">Project Euler</a></h2><br/>
+								<h2>Problem #1 - <i>Multiples of 3 or 5</i></h2>
 							</header>
-							<p>
-                                Note that only the first 100 problems will be discussed here, to honor the guidance given on the website.<br />
-                                The solutions that are given here may not be fully optimized for time and memory (both in absolute terms and by complexity).<br />
-                                However, they are optimized to compute the desired answer in a reasonable amount of time (within 1 minute).<br />
-                                These will most likely be reformatted and added to over time as I improve the overall website.<br />
-                                Feel free to email me if I've made any mistakes!
-							</p>
-                            <hr />
+							<!-- <a href="#" class="image featured"><img src="images/pic06.jpg" alt="" /></a> -->
 							<section>
 								<header>
-									<h3>Solutions</h3>
+									<h3>Original Problem Statement</h3>
 								</header>
-                                <ul>
-                                    <li><a href="project_euler_001.html"># 001 - Multiples of 3 or 5</a></li>
-                                </ul>
+								<p>
+									If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. <br/>
+									The sum of these multiples is 23.<br/>
+									Find the sum of all the multiples of 3 or 5 below 1000.
+								</p>
+							</section>
+							<section>
+								<header>
+									<h3>Iterative Approach (Brute-Force)</h3>
+								</header>
+								<p>
+									At first glance, we could programmatically solve this by iterating upwards and summing, as follows:
+									<script src="https://gist.github.com/mihiryerande/e5c910cb9f2e44bbdbd2671bd73e98fa.js"></script>
+									The time-complexity of this approach would be linear at \(O(N)\).<br/>
+									<b>Can we do better? → YES</b>
+								</p>
+							</section>
+							<section>
+								<header>
+									<h3>Iterative Approach (Improved)</h3>
+								</header>
+								<p>
+									We're only really concerned with multiples of 3 or 5.<br/>
+									Suppose we ignore any irrelevant numbers by skipping directly to our desired multiples, as follows:
+									<script src="https://gist.github.com/mihiryerande/49f7b2eb52bf5dbdc62a25c8c4dded94.js"></script>
+									However, note that we would end up counting certain values <i>twice</i>...<br/>
+									<ul>
+										<li><b>Multiples of 3</b> → 3, 6, 9, 12, <b>15</b>, 18, 21, 24, 27, <b>30</b>, 33, ...</li>
+										<li><b>Multiples of 5</b> → 5, 10, <b>15</b>, 20, 25, <b>30</b>, 35, ...</li>
+									</ul>
+									These are the multiples of 3 <i>and</i> 5, meaning multiples of 15.<br/>
+									This can be resolved by appending the following to the previous code:
+									<script src="https://gist.github.com/mihiryerande/1dd8bcd79a98ab4333a874acd6e5dacc.js"></script>
+									Although the absolute runtime has been improved, the time-complexity is still linear at \(O(N)\).<br/>
+									<b>Can we do better !? → YES</b>
+								</p>
+							</section>
+							<section>
+								<header>
+									<h3>Summation Approach</h3>
+								</header>
+								<p>
+									Consider the summation we are looking to compute.<br/>
+									\[S = \sum_{x=1\text{ ; }3 \vert x \vee 5 \vert x}^{N-1} x\]
+									We can break this into separate, <i>simpler </i>summations by adapting the <a href="https://en.wikipedia.org/wiki/Inclusion%E2%80%93exclusion_principle">PIE (principle of inclusion-exclusion)</a>.<br/>
+									Additionally, we can apply <a href="https://en.wikipedia.org/wiki/Arithmetic_progression#Sum">Gauss's Little Formula</a> to determine the sum of an arithmetic progression.
+									\[
+										\begin{align*}
+											S &= \sum_{x=1\text{ ; }3 \vert x \vee 5 \vert x}^{N-1} x                                                                                  				&\text{Original summation} \\
+											  &= \sum_{x=1\text{ ; }3 \vert x}^{N-1} x + \sum_{x=1\text{ ; }5 \vert x}^{N-1} x - \sum_{x=1\text{ ; }3 \vert x \wedge 5 \vert x}^{N-1} x				&\text{Apply PIE} \\
+											  &= \sum_{x=1\text{ ; }3 \vert x}^{N-1} x + \sum_{x=1\text{ ; }5 \vert x}^{N-1} x - \sum_{x=1\text{ ; }15 \vert x}^{N-1} x                				&\text{Multiples of 3 and 5 $\equiv$ Multiples of 15} \\
+											  &= \sum_{i=1}^{\lfloor (N-1)/3 \rfloor} 3i + \sum_{i=1}^{\lfloor (N-1)/5 \rfloor} 5i - \sum_{i=1}^{\lfloor (N-1)/15 \rfloor} 15i         				&\text{Ignore non-multiples} \\
+											  &= 3 \cdot \sum_{i=1}^{\lfloor (N-1)/3 \rfloor} i + 5 \cdot \sum_{i=1}^{\lfloor (N-1)/5 \rfloor} i - 15 \cdot \sum_{i=1}^{\lfloor (N-1)/15 \rfloor} i &\text{Factor out constants}\\
+											  &= 3 \cdot \frac{\lfloor (N-1)/3 \rfloor \cdot (\lfloor (N-1)/3 \rfloor + 1)}{2} + 5 \cdot \frac{\lfloor (N-1)/5 \rfloor \cdot (\lfloor (N-1)/5 \rfloor + 1)}{2} - 15 \cdot \frac{\lfloor (N-1)/15 \rfloor \cdot (\lfloor (N-1)/15 \rfloor + 1)}{2} &\text{Apply Gauss's Little Formula}
+										\end{align*}
+									\]
+									Gauss's Little Formula allows us to greatly simplify the code.<br/>
+									We now have the following code:
+									<script src="https://gist.github.com/mihiryerande/b5fc217df08e148088ec7ff1a69f561a.js"></script>
+									The time-complexity of this solution is \(O(1)\) since we are only computing a finite amount of arithmetic operations.
+								</p>
+							<section>
+								<header>
+									<h3>My Solution on GitHub</h3>
+								</header>
+								<p>
+									The full Python3 code for my solution implementation can be found here:
+									<a href="https://github.com/mihiryerande/project-euler-001">GitHub Solution</a>
+								</p>
 							</section>
 						</article>
 					</div>

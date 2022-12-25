@@ -85,61 +85,113 @@
 									Find the sum of all the multiples of 3 or 5 below 1000.
 								</p>
 							</section>
+							<hr/>
 							<section>
 								<header>
 									<h3>Iterative Approach (Brute-Force)</h3>
 								</header>
 								<p>
-									At first glance, we could programmatically solve this by iterating upwards and summing, as follows:
-									<script src="https://gist.github.com/mihiryerande/e5c910cb9f2e44bbdbd2671bd73e98fa.js"></script>
-									The time-complexity of this approach would be linear at \(O(N)\).<br/>
+									At first glance, we could write some simple code to programmatically solve this by brute-force.<br/>
+									The strategy would be to iterate upwards from 1, and add the relevant numbers along the way.<br/><br/>
+									The code for this would be as follows:
+									<script src="https://gist.github.com/mihiryerande/e5c910cb9f2e44bbdbd2671bd73e98fa.js"></script><br/>
+									The computational complexity of this code would be:
+									<ul>
+										<li>Time → Linear, i.e. \(O(N)\)</li>
+										<li>Space → Constant, i.e. \(O(1)\)</li>
+									</ul>
 									<b>Can we do better? → YES</b>
 								</p>
 							</section>
+							<hr/>
 							<section>
 								<header>
 									<h3>Iterative Approach (Improved)</h3>
 								</header>
 								<p>
+									The previous approach ends up considering many irrelevant numbers.<br/>
 									We're only really concerned with multiples of 3 or 5.<br/>
-									Suppose we ignore any irrelevant numbers by skipping directly to our desired multiples, as follows:
-									<script src="https://gist.github.com/mihiryerande/49f7b2eb52bf5dbdc62a25c8c4dded94.js"></script>
+									Suppose we alter the code to ignore irrelevant numbers by skipping directly to our desired multiples.<br/><br/>
+									The code would then be as follows:
+									<script src="https://gist.github.com/mihiryerande/49f7b2eb52bf5dbdc62a25c8c4dded94.js"></script><br/>
 									However, note that we would end up counting certain values <i>twice</i>...<br/>
 									<ul>
 										<li><b>Multiples of 3</b> → 3, 6, 9, 12, <b>15</b>, 18, 21, 24, 27, <b>30</b>, 33, ...</li>
 										<li><b>Multiples of 5</b> → 5, 10, <b>15</b>, 20, 25, <b>30</b>, 35, ...</li>
 									</ul>
-									These are the multiples of 3 <i>and</i> 5, meaning multiples of 15.<br/>
-									This can be resolved by appending the following to the previous code:
-									<script src="https://gist.github.com/mihiryerande/1dd8bcd79a98ab4333a874acd6e5dacc.js"></script>
-									Although the absolute runtime has been improved, the time-complexity is still linear at \(O(N)\).<br/>
+									These are the multiples of 3 <i>and</i> 5, meaning the multiples of 15.<br/><br/>
+									This can be resolved by simply subtracting the double-counted numbers.<br/>
+									We simply add this bit to our previous code:<br/><br/>
+									<script src="https://gist.github.com/mihiryerande/1dd8bcd79a98ab4333a874acd6e5dacc.js"></script><br/>
+									The absolute runtime of the code has now been improved as we are ...<br/>
+									<ul>
+										<li>No longer iterating across every number less than \(N\)</li>
+										<li>No longer checking for divisibility by 3 or 5</li>
+									</ul>
+									However, even with these speed-ups, the time-complexity is still linear at \(O(N)\).<br/>
 									<b>Can we do better !? → YES</b>
 								</p>
 							</section>
+							<hr/>
 							<section>
 								<header>
 									<h3>Summation Approach</h3>
 								</header>
 								<p>
-									Consider the summation we are looking to compute.<br/>
-									\[S = \sum_{x=1\text{ ; }3 \vert x \vee 5 \vert x}^{N-1} x\]
-									We can break this into separate, <i>simpler </i>summations by adapting the <a href="https://en.wikipedia.org/wiki/Inclusion%E2%80%93exclusion_principle">PIE (principle of inclusion-exclusion)</a>.<br/>
-									Additionally, we can apply <a href="https://en.wikipedia.org/wiki/Arithmetic_progression#Sum">Gauss's Little Formula</a> to determine the sum of an arithmetic progression.
-									\[
+									Let's instead directly examine the summation itself, \(S\), which we are looking to compute.<br/><br/>
+									\(\hspace{1em}S = \displaystyle\sum_{x=1\text{ ; }3 \vert x \hspace{0.2em} \vee \hspace{0.2em} 5 \vert x}^{N-1} x\)<br/><br/>
+									
+									Using the overall idea from the <a href="https://en.wikipedia.org/wiki/Inclusion%E2%80%93exclusion_principle">PIE (principle of inclusion-exclusion)</a>, we can break this down into separate, simpler summations.<br/><br/>
+									\(
 										\begin{align*}
-											S &= \sum_{x=1\text{ ; }3 \vert x \vee 5 \vert x}^{N-1} x                                                                                  				&\text{Original summation} \\
-											  &= \sum_{x=1\text{ ; }3 \vert x}^{N-1} x + \sum_{x=1\text{ ; }5 \vert x}^{N-1} x - \sum_{x=1\text{ ; }3 \vert x \wedge 5 \vert x}^{N-1} x				&\text{Apply PIE} \\
-											  &= \sum_{x=1\text{ ; }3 \vert x}^{N-1} x + \sum_{x=1\text{ ; }5 \vert x}^{N-1} x - \sum_{x=1\text{ ; }15 \vert x}^{N-1} x                				&\text{Multiples of 3 and 5 $\equiv$ Multiples of 15} \\
-											  &= \sum_{i=1}^{\lfloor (N-1)/3 \rfloor} 3i + \sum_{i=1}^{\lfloor (N-1)/5 \rfloor} 5i - \sum_{i=1}^{\lfloor (N-1)/15 \rfloor} 15i         				&\text{Ignore non-multiples} \\
-											  &= 3 \cdot \sum_{i=1}^{\lfloor (N-1)/3 \rfloor} i + 5 \cdot \sum_{i=1}^{\lfloor (N-1)/5 \rfloor} i - 15 \cdot \sum_{i=1}^{\lfloor (N-1)/15 \rfloor} i &\text{Factor out constants}\\
-											  &= 3 \cdot \frac{\lfloor (N-1)/3 \rfloor \cdot (\lfloor (N-1)/3 \rfloor + 1)}{2} + 5 \cdot \frac{\lfloor (N-1)/5 \rfloor \cdot (\lfloor (N-1)/5 \rfloor + 1)}{2} - 15 \cdot \frac{\lfloor (N-1)/15 \rfloor \cdot (\lfloor (N-1)/15 \rfloor + 1)}{2} &\text{Apply Gauss's Little Formula}
+											\hspace{1em}S &= \displaystyle\sum_{x=1\text{ ; }3 \vert x \hspace{0.2em} \vee \hspace{0.2em} 5 \vert x}^{N-1} x &\text{Original summation} \\
+											\hspace{1em}  &= \displaystyle\sum_{x=1\text{ ; }3 \vert x}^{N-1} x + \displaystyle\sum_{x=1\text{ ; }5 \vert x}^{N-1} x - \displaystyle\sum_{x=1\text{ ; }3 \vert x \hspace{0.2em} \wedge \hspace{0.2em} 5 \vert x}^{N-1} x &\text{Separate using PIE} \\
+											\hspace{1em}  &= \displaystyle\sum_{x=1\text{ ; }3 \vert x}^{N-1} x + \displaystyle\sum_{x=1\text{ ; }5 \vert x}^{N-1} x - \displaystyle\sum_{x=1\text{ ; }15 \vert x}^{N-1} x &\text{Multiples of 3 and 5 }\equiv\text{ Multiples of 15}
 										\end{align*}
-									\]
-									Gauss's Little Formula allows us to greatly simplify the code.<br/>
-									We now have the following code:
-									<script src="https://gist.github.com/mihiryerande/b5fc217df08e148088ec7ff1a69f561a.js"></script>
-									The time-complexity of this solution is \(O(1)\) since we are only computing a finite amount of arithmetic operations.
+									\)<br/><br/>
+									Notice here that the multiples of 15 are again subtracted, which avoids double-counting.<br/><br/>
+									
+									Each of these summands is the sum of a finite <a href="https://en.wikipedia.org/wiki/Arithmetic_progression">arithmetic progression</a>.<br/>
+									Thus we can take advantage of <a href="https://en.wikipedia.org/wiki/Arithmetic_progression#Sum">Gauss's Little Formula</a> to convert each to a closed-form expression.<br/>
+									Recall the closed-form expression, as follows:<br/><br/>
+									\(
+										\hspace{1em}\displaystyle\sum_{i=1}^n i = \frac{n \cdot (n+1)}{2}
+									\)<br/><br/>
+									
+									In the following, let \(N_m = \displaystyle\left\lfloor\frac{N-1}{m}\right\rfloor\), that is, the number of positive multiples of \(m\) below \(N\).<br/><br/>
+
+									\(
+										\begin{align*}
+											\hspace{1em}S &= \displaystyle\sum_{x=1\text{ ; }3 \vert x}^{N-1} x + \displaystyle\sum_{x=1\text{ ; }5 \vert x}^{N-1} x - \displaystyle\sum_{x=1\text{ ; }15 \vert x}^{N-1} x &\text{Expression from above} \\
+											\hspace{1em}  &= \displaystyle\sum_{i=1}^{\lfloor (N-1)/3 \rfloor} 3i + \sum_{i=1}^{\lfloor (N-1)/5 \rfloor} 5i - \sum_{i=1}^{\lfloor (N-1)/15 \rfloor} 15i     			   &\text{Ignore non-multiples} \\
+											\hspace{1em}  &= \displaystyle\sum_{i=1}^{N_3} 3i + \sum_{i=1}^{N_5} 5i - \sum_{i=1}^{N_{15}} 15i     			                                                               &\text{Substitute in }N_m \\
+											\hspace{1em}  &= \displaystyle 3\cdot\sum_{i=1}^{N_3} i + 5\cdot\sum_{i=1}^{N_5} i - 15\cdot\sum_{i=1}^{N_{15}} i     			                                               &\text{Factor out constants} \\
+											\hspace{1em}  &= \displaystyle 3\cdot\frac{N_3(N_3+1)}{2} + 5\cdot\frac{N_5(N_5+1)}{2} - 15\cdot\frac{N_{15}(N_{15}+1)}{2}                                                     &\text{Apply Gauss's Little Formula}
+										\end{align*}
+									\)<br/><br/>
+									
+									We've finally arrived at a closed-form expression to directly calculate the desired sum!<br/>
+									This can easily be coded as follows:
+									<script src="https://gist.github.com/mihiryerande/b5fc217df08e148088ec7ff1a69f561a.js"></script><br/>
+									The time-complexity has been reduced to \(O(1)\) as we only need to compute a fixed number of arithmetic operations.
 								</p>
+							</section>
+							<section>
+								<header>
+									<h3>Answer</h3>
+								</header>
+								<p>
+									The answer can be easily computed by hand, giving the following:<br/><br/>
+									\(
+										\begin{align*}
+											\hspace{1em}S &= \displaystyle 3\cdot\frac{N_3(N_3+1)}{2} + 5\cdot\frac{N_5(N_5+1)}{2} - 15\cdot\frac{N_{15}(N_{15}+1)}{2} \\
+											\hspace{1em}  &= \displaystyle 3\cdot\frac{333(333+1)}{2} + 5\cdot\frac{199(199+1)}{2} - 15\cdot\frac{66(66+1)}{2} \\
+											\hspace{1em}  &= 166,833 + 99,500 - 33,165 \\
+											\hspace{1em}  &= 233,168
+										\end{align*}
+									\)
+								</p>
+							</section>
 							<section>
 								<header>
 									<h3>My Solution on GitHub</h3>

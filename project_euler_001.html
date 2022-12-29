@@ -74,14 +74,13 @@
 								<h2><a href="project_euler_main.html">Project Euler</a></h2><br/>
 								<h2>Problem #1 - <i>Multiples of 3 or 5</i></h2>
 							</header>
-							<!-- <a href="#" class="image featured"><img src="images/pic06.jpg" alt="" /></a> -->
 							<section>
 								<header>
 									<h3>Original Problem Statement</h3>
 								</header>
 								<p>
 									If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. <br/>
-									The sum of these multiples is 23.<br/>
+									The sum of these multiples is 23.<br/><br/>
 									Find the sum of all the multiples of 3 or 5 below 1000.
 								</p>
 							</section>
@@ -99,7 +98,7 @@
 									<ul>
 										<li>Time → Linear, i.e. \(O(N)\)</li>
 										<li>Space → Constant, i.e. \(O(1)\)</li>
-									</ul>
+									</ul><br/>
 									<b>Can we do better? → YES</b>
 								</p>
 							</section>
@@ -128,7 +127,7 @@
 										<li>No longer iterating across every number less than \(N\)</li>
 										<li>No longer checking for divisibility by 3 or 5</li>
 									</ul>
-									However, even with these speed-ups, the time-complexity is still linear at \(O(N)\).<br/>
+									However, even with these speed-ups, the time-complexity is still linear at \(O(N)\).<br/><br/>
 									<b>Can we do better !? → YES</b>
 								</p>
 							</section>
@@ -140,7 +139,9 @@
 								<p>
 									Let's instead directly examine the summation itself, \(S\), which we are looking to compute.<br/><br/>
 									\(\hspace{1em}S = \displaystyle\sum_{x=1\text{ ; }3 \vert x \hspace{0.2em} \vee \hspace{0.2em} 5 \vert x}^{N-1} x\)<br/><br/>
-									
+								</p>
+								<h4>Inclusion-Exclusion Principle</h4>
+								<p>
 									Using the overall idea from the <a href="https://en.wikipedia.org/wiki/Inclusion%E2%80%93exclusion_principle">PIE (principle of inclusion-exclusion)</a>, we can break this down into separate, simpler summations.<br/><br/>
 									\(
 										\begin{align*}
@@ -149,17 +150,17 @@
 											\hspace{1em}  &= \displaystyle\sum_{x=1\text{ ; }3 \vert x}^{N-1} x + \displaystyle\sum_{x=1\text{ ; }5 \vert x}^{N-1} x - \displaystyle\sum_{x=1\text{ ; }15 \vert x}^{N-1} x &\text{Multiples of 3 and 5 }\equiv\text{ Multiples of 15}
 										\end{align*}
 									\)<br/><br/>
-									Notice here that the multiples of 15 are again subtracted, which avoids double-counting.<br/><br/>
-									
+									Notice here that the multiples of 15 are again subtracted, which avoids double-counting.
+								</p>
+								<h4>Gauss's Little Formula</h4>
+								<p>
 									Each of these summands is the sum of a finite <a href="https://en.wikipedia.org/wiki/Arithmetic_progression">arithmetic progression</a>.<br/>
 									Thus we can take advantage of <a href="https://en.wikipedia.org/wiki/Arithmetic_progression#Sum">Gauss's Little Formula</a> to convert each to a closed-form expression.<br/>
 									Recall the closed-form expression, as follows:<br/><br/>
 									\(
 										\hspace{1em}\displaystyle\sum_{i=1}^n i = \frac{n \cdot (n+1)}{2}
 									\)<br/><br/>
-									
 									In the following, let \(N_m = \displaystyle\left\lfloor\frac{N-1}{m}\right\rfloor\), that is, the number of positive multiples of \(m\) below \(N\).<br/><br/>
-
 									\(
 										\begin{align*}
 											\hspace{1em}S &= \displaystyle\sum_{x=1\text{ ; }3 \vert x}^{N-1} x + \displaystyle\sum_{x=1\text{ ; }5 \vert x}^{N-1} x - \displaystyle\sum_{x=1\text{ ; }15 \vert x}^{N-1} x &\text{Expression from above} \\
@@ -169,19 +170,22 @@
 											\hspace{1em}  &= \displaystyle 3\cdot\frac{N_3(N_3+1)}{2} + 5\cdot\frac{N_5(N_5+1)}{2} - 15\cdot\frac{N_{15}(N_{15}+1)}{2}                                                     &\text{Apply Gauss's Little Formula}
 										\end{align*}
 									\)<br/><br/>
-									
+								</p>
+								<h4>Final Code</h4>
+								<p>
 									We've finally arrived at a closed-form expression to directly calculate the desired sum!<br/>
 									This can easily be coded as follows:
 									<script src="https://gist.github.com/mihiryerande/b5fc217df08e148088ec7ff1a69f561a.js"></script><br/>
 									The time-complexity has been reduced to \(O(1)\) as we only need to compute a fixed number of arithmetic operations.
 								</p>
 							</section>
+							<hr/>
 							<section>
 								<header>
 									<h3>Answer</h3>
 								</header>
 								<p>
-									The answer can be easily computed by hand, giving the following:<br/><br/>
+									The answer can easily be computed manually with a calculator, giving the following:<br/><br/>
 									\(
 										\begin{align*}
 											\hspace{1em}S &= \displaystyle 3\cdot\frac{N_3(N_3+1)}{2} + 5\cdot\frac{N_5(N_5+1)}{2} - 15\cdot\frac{N_{15}(N_{15}+1)}{2} \\
@@ -192,6 +196,7 @@
 									\)
 								</p>
 							</section>
+							<hr/>
 							<section>
 								<header>
 									<h3>My Solution on GitHub</h3>

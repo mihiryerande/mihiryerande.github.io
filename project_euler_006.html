@@ -15,6 +15,8 @@
 		<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
 		<link rel="manifest" href="assets/favicon/site.webmanifest">
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 	</head>
 	<body class="no-sidebar is-preload">
 		<div id="page-wrapper">
@@ -56,12 +58,12 @@
 								<li><a href="right-sidebar.html">Right Sidebar</a></li>
 								<li><a href="no-sidebar.html">No Sidebar</a></li> -->
 								<li><a href="projects_main.html">Projects</a></li>
-                                <li><a href="#">Project Euler</a></li>
+								<li><a href="project_euler_main.html">Project Euler</a></li>
 								<li><a href="notes_main.html">Notes</a></li>
 								<li><a href="resume_mihiryerande.pdf" target="_blank">Résumé</a></li>
 							</ul>
 						</nav>
-						
+
 				</div>
 
 			<!-- Main -->
@@ -70,29 +72,121 @@
 					<div class="container">
 						<article id="main" class="special">
 							<header>
-								<h2><a href="#">Project Euler</a></h2>
-								<p>
-									My answers (with explanation) to <a href="https://projecteuler.net/">Project Euler</a> problems!
-								</p>
+								<h2><a href="project_euler_main.html">Project Euler</a></h2><br/>
+								<h2>Problem #6 - <i>Sum Square Difference</i></h2>
 							</header>
-							<p>
-                                Note that only the first 100 problems will be discussed here, to honor the guidance given on the website.<br />
-                                The solutions that are given here may not be fully optimized for time and memory (both in absolute terms and by complexity).<br />
-                                However, they are optimized to compute the desired answer in a reasonable amount of time (within 1 minute).<br />
-                                These will most likely be reformatted and added to over time as I improve the overall website.<br />
-                                Feel free to email me if I've made any mistakes!
-							</p>
-                            <hr />
 							<section>
 								<header>
-									<h3>Solutions</h3>
+									<h3>Original Problem Statement</h3>
 								</header>
-                                <ul>
-                                    <li><a href="project_euler_001.html"># 001 - Multiples of 3 or 5</a></li>
-									<li><a href="project_euler_002.html"># 002 - Even Fibonacci Numbers</a></li>
-									<li><a href="project_euler_006.html"># 006 - Sum Square Difference</a></li>
-									<li><a href="project_euler_025.html"># 025 - 1000-digit Fibonacci Number</a></li>
-                                </ul>
+								<p>
+									The sum of the squares of the first ten natural numbers is,<br/>
+									\(\hspace{1em}1^2 + 2^2 + \cdots + 10^2 = 385\)<br/>
+									The square of the sum of the first ten natural numbers is,<br/>
+									\(\hspace{1em}(1 + 2 + \cdots + 10)^2 = 3025\)<br/>
+									Hence the difference between the sum of the squares of the first ten natural numbers and the square of the sum is<br/>
+									\(\hspace{1em}3025 - 385 = 2640\).<br/><br/>
+									Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.
+								</p>
+							</section>
+							<hr/>
+							<section>
+								<header>
+									<h3>Iterative Approach</h3>
+								</header>
+								<p>
+									We're looking to calculate the difference between the sum of squares and the square of the sum.<br/>
+									To determine each of these, we could write code to simply iterate upwards for \(1\) to \(n\).<br/>
+									The code for this would be as follows:
+									<script src="https://gist.github.com/mihiryerande/613caa869ba5af7a698bea15ea4e0e19.js"></script><br/>
+									The time-complexity of this code would be linear at \(O(n)\).<br/><br/>
+									<b>Can we do better? → YES</b>
+								</p>
+							</section>
+							<hr/>
+							<section>
+								<header>
+									<h3>Summation Approach</h3>
+								</header>
+								<p>
+									Let's instead look directly at the difference that we want to calculate:<br/><br/>
+									\(\hspace{1em}D = S_1 - S_2 = \displaystyle\left(\sum_{i=1}^n i\right)^2 - \sum_{i=1}^n i^2\)<br/>
+									It turns out that there are closed-form expressions for each of these terms!
+								</p>
+								<h4>Gauss's Little Formula</h4>
+								<p>
+									Let's first consider \(S_1\).<br/>
+									The sum of the numbers \(1\) through \(n\) has a well-known closed-form expression, occasionally known as <a href="https://en.wikipedia.org/wiki/Arithmetic_progression#History">Gauss's Little Formula</a>:<br/>
+									The formula is the following:<br/><br/>
+									\(\hspace{1em}\displaystyle\sum_{i=1}^n i = \frac{n \cdot (n+1)}{2}\)<br/><br/>
+									Using this, we can produce a closed-form expression for the <i>square-of-sum</i>, i.e. \(S_1\), as follows:<br/><br/>
+									\(
+										\begin{align*}
+											\hspace{1em}S_1 &= \displaystyle\left(\sum_{i=1}^n i\right)^2 \\
+											\hspace{1em}    &= \displaystyle\left(\frac{n \cdot (n+1)}{2}\right)^2 \\
+											\hspace{1em}    &= \displaystyle\frac{n^2 \cdot (n+1)^2}{4} \\
+										\end{align*}
+									\)<br/><br/>
+									Hold onto this for a bit!
+								</p>
+								<h4>Pyramidal Numbers</h4>
+								<p>
+									Let's now consider \(S_2\).<br/>
+									Again there is a known formula for the sum of the squares of \(1\) through \(n\).<br/>
+									The formula has various names and appears in different contexts, such as the <a href="https://en.wikipedia.org/wiki/Square_pyramidal_number">Square Pyramidal Numbers</a>.<br/>
+									The closed-form expression is as follows:<br/><br/>
+									\(\hspace{1em}\displaystyle\sum_{i=1}^n i^2 = \frac{n \cdot (n+1) \cdot (2n+1)}{6}\)<br/><br/>
+									This is \(S_2\), precisely.
+								</p>
+								<h4>Complete Formula</h4>
+								With the previous two revelations, we can now find a singular expression for the difference \(D\), as follows:<br/><br/>
+								\(
+									\begin{align*}
+										\hspace{1em}D &= S_1 - S_2 & \text{Desired answer} \\
+										\hspace{1em}  &= \displaystyle\frac{n^2 \cdot (n+1)^2}{4} - \frac{n \cdot (n+1) \cdot (2n+1)}{6} & \text{Substitute with previous formulæ} \\
+										\hspace{1em}  &= \displaystyle\frac{3 \cdot n^2 \cdot (n+1)^2}{12} - \frac{2 \cdot n \cdot (n+1) \cdot (2n+1)}{12} \\
+										\hspace{1em}  &= \displaystyle\frac{3 \cdot n^2 \cdot (n+1)^2 - 2 \cdot n \cdot (n+1) \cdot (2n+1)}{12} \\
+										\hspace{1em}  &= \displaystyle n \cdot (n+1) \cdot \frac{3 \cdot n \cdot (n+1) - 2 \cdot (2n+1)}{12} \\
+										\hspace{1em}  &= \displaystyle n \cdot (n+1) \cdot \frac{(3n^2 + 3n) - (4n + 2)}{12} \\
+										\hspace{1em}  &= \displaystyle n \cdot (n+1) \cdot \frac{3n^2 - n - 2}{12} \\
+										\hspace{1em}  &= \displaystyle n \cdot (n+1) \cdot \frac{3n^2 - 3n + 2n - 2}{12} \\
+										\hspace{1em}  &= \displaystyle n \cdot (n+1) \cdot \frac{(3n+2) \cdot (n-1)}{12} \\
+										\hspace{1em}  &= \displaystyle\frac{n \cdot (n-1) \cdot (n+1) \cdot (3n+2)}{12} \\
+									\end{align*}
+								\)<br/><br/>
+								Now that we have a single formula, we no longer need to iterate!<br/>
+								The code for this would be as follows:<br/><br/>
+								<script src="https://gist.github.com/mihiryerande/232796b3b557f76e72310601db93fb48.js"></script><br/><br/>
+								The time-complexity of this solution would be essentially \(O(1)\), as we've eliminated any need for iteration.
+							</section>
+							<hr/>
+							<section>
+								<header>
+									<h3>Answer</h3>
+								</header>
+								<p>
+									We can easily calculate the answer by hand, as follows:<br/><br/>
+									\(
+										\begin{align*}
+											\hspace{1em}D &= \displaystyle\frac{n \cdot (n-1) \cdot (n+1) \cdot (3n+2)}{12} \\
+											\hspace{1em}  &= \displaystyle\frac{100 \cdot (100-1) \cdot (100+1) \cdot (3\cdot 100+2)}{12} \\
+											\hspace{1em}  &= \displaystyle\frac{100 \cdot 99 \cdot 101 \cdot 302}{12} \\
+											\hspace{1em}  &= 25 \cdot 33 \cdot 101 \cdot 302 \\
+											\hspace{1em}  &= 25 \cdot 33 \cdot 101 \cdot 302 \\
+											\hspace{1em}  &= 26,164,150 \\
+										\end{align*}
+									\)
+								</p>
+							</section>
+							<hr/>
+							<section>
+								<header>
+									<h3>My Solution on GitHub</h3>
+								</header>
+								<p>
+									The full Python3 code for my solution implementation can be found here:
+									<a href="https://github.com/mihiryerande/project-euler-006">GitHub Solution</a>
+								</p>
 							</section>
 						</article>
 					</div>

@@ -15,6 +15,8 @@
 		<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
 		<link rel="manifest" href="assets/favicon/site.webmanifest">
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 	</head>
 	<body class="no-sidebar is-preload">
 		<div id="page-wrapper">
@@ -56,12 +58,12 @@
 								<li><a href="right-sidebar.html">Right Sidebar</a></li>
 								<li><a href="no-sidebar.html">No Sidebar</a></li> -->
 								<li><a href="projects_main.html">Projects</a></li>
-                                <li><a href="#">Project Euler</a></li>
+								<li><a href="project_euler_main.html">Project Euler</a></li>
 								<li><a href="notes_main.html">Notes</a></li>
 								<li><a href="resume_mihiryerande.pdf" target="_blank">Résumé</a></li>
 							</ul>
 						</nav>
-						
+
 				</div>
 
 			<!-- Main -->
@@ -70,29 +72,133 @@
 					<div class="container">
 						<article id="main" class="special">
 							<header>
-								<h2><a href="#">Project Euler</a></h2>
-								<p>
-									My answers (with explanation) to <a href="https://projecteuler.net/">Project Euler</a> problems!
-								</p>
+								<h2><a href="project_euler_main.html">Project Euler</a></h2><br/>
+								<h2>Problem #25 - <i>1000-digit Fibonacci Number</i></h2>
 							</header>
-							<p>
-                                Note that only the first 100 problems will be discussed here, to honor the guidance given on the website.<br />
-                                The solutions that are given here may not be fully optimized for time and memory (both in absolute terms and by complexity).<br />
-                                However, they are optimized to compute the desired answer in a reasonable amount of time (within 1 minute).<br />
-                                These will most likely be reformatted and added to over time as I improve the overall website.<br />
-                                Feel free to email me if I've made any mistakes!
-							</p>
-                            <hr />
 							<section>
 								<header>
-									<h3>Solutions</h3>
+									<h3>Original Problem Statement</h3>
 								</header>
-                                <ul>
-                                    <li><a href="project_euler_001.html"># 001 - Multiples of 3 or 5</a></li>
-									<li><a href="project_euler_002.html"># 002 - Even Fibonacci Numbers</a></li>
-									<li><a href="project_euler_006.html"># 006 - Sum Square Difference</a></li>
-									<li><a href="project_euler_025.html"># 025 - 1000-digit Fibonacci Number</a></li>
-                                </ul>
+								<p>
+									The Fibonacci sequence is defined by the recurrence relation:<br/><br/>
+									\(\hspace{1em}F_n = F_{n−1} + F_{n−2}\text{, where }F_1 = 1\text{ and }F_2 = 1\).<br/><br/>
+									Hence the first 12 terms will be:<br/><br/>
+									\(
+										\begin{align*}
+											\hspace{1em}F_1    & =   1 \\
+											\hspace{1em}F_2    & =   1 \\
+											\hspace{1em}F_3    & =   2 \\
+											\hspace{1em}F_4    & =   3 \\
+											\hspace{1em}F_5    & =   5 \\
+											\hspace{1em}F_6    & =   8 \\
+											\hspace{1em}F_7    & =  13 \\
+											\hspace{1em}F_8    & =  21 \\
+											\hspace{1em}F_9    & =  34 \\
+											\hspace{1em}F_{10} & =  55 \\
+											\hspace{1em}F_{11} & =  89 \\
+											\hspace{1em}F_{12} & = 144
+										\end{align*}
+									\)<br/><br/>
+									The 12<sup>th</sup> term, \(F_{12}\), is the first term to contain three digits.<br/><br/>
+									What is the index of the first term in the Fibonacci sequence to contain 1000 digits?
+								</p>
+							</section>
+							<hr/>
+							<section>
+								<header>
+									<h3>Initial Thoughts</h3>
+								</header>
+								<p>
+									The Fibonacci numbers are interesting for many reasons, and much discussion can be had about them.<br/>
+									I've discussed them a bit here: <a href="notes_fibonacci.html">Fibonacci Numbers</a><br/>
+									However, for the sake of solving this problem, we will avoid that discussion and skip ahead to find a practical solution.<br/><br/>
+									Note that we define the <i>Fibs</i> as follows:
+									<ul>
+										<li>\(F_0 = 0\)</li>
+										<li>\(F_1 = 1\)</li>
+										<li>\(F_n = F_{n-1} + F_{n-2}\), where \(n \in \mathbb{N}\) and \(n \geq 2\)</li>
+									</ul>
+									This matches the problem statement, and it will be notationally convenient to use this enumeration.<br/><br/>
+									Additionally, note the following constants which will be used below:
+									<ul>
+										<li>Lowercase phi: \(\hspace{1em}\displaystyle\phi = \frac{1+\sqrt{5}}{2} \approx 1.618\cdots\)</li>
+										<li>Lowercase psi: \(\hspace{1em}\displaystyle\psi = \frac{1-\sqrt{5}}{2} \approx -0.618\cdots\)</li>
+									</ul><br/>
+									With the Fibs enumerated as above, along with these constants, the closed-form expression turns out to be:<br/><br/>
+									\(\hspace{1em}\displaystyle F_n = \frac{\phi^n - \psi^n}{\sqrt{5}}\)<br/><br/>
+									Also, it turns out that the subtracted term, \(\displaystyle\frac{\psi^n}{\sqrt{5}}\), always has a magnitude below \(0.5\).<br/>
+									This is great for the sake of calculation, as it allows us to simplify the formula:<br/><br/>
+									\(\hspace{1em}\displaystyle F_n = round\left(\frac{\phi^n}{\sqrt{5}}\right)\)<br/><br/>
+									With all of this in mind, let's proceed (╯°□°）╯︵ ┻━┻ !!
+								</p>
+							</section>
+							<hr/>
+							<section>
+								<header>
+									<h3>Iterative Approach (Brute-Force)</h3>
+								</header>
+								<p>
+									At first glance, we could easily write some code to iterate upwards and enumerate the Fibs in sequence.<br/>
+									The following code would accomplish what we need:<br/>
+									<script src="https://gist.github.com/mihiryerande/ac16fd550749a6df485285fb04c9db82.js"></script><br/><br/>
+									The time-complexity of this code depends on number of iterations, i.e. the index of the Fib in question.<br/>
+									Since we know the Fibs are roughly exponential, this would be roughly \(O(log(10^d)) \rightarrow O(d)\).<br/><br/>
+									<b>Can we do better? → YES</b>
+								</p>
+							</section>
+							<hr/>
+							<section>
+								<header>
+									<h3>Direct Formula Approach</h3>
+								</header>
+								<p>
+									Let's instead look at the direct formula used for Fib computation:<br/><br/>
+									\(\hspace{1em}\displaystyle F_n = round\left(\frac{\phi^n}{\sqrt{5}}\right)\)<br/><br/>
+									We can use this formula to formula calculate the desired value of index \(n\), as follows:<br/><br/>
+									\(
+										\begin{align*}
+											\hspace{1em}F_n                                       & \geq 10^{d-1}                                         & \text{Desired Fib} \\
+											\hspace{1em}round\left(\frac{\phi^n}{\sqrt{5}}\right) & \geq 10^{d-1}                                         & \text{Approximate formula} \\
+											\hspace{1em}\frac{\phi^n}{\sqrt{5}}                   & \geq 10^{d-1} - 0.5                                   & \text{Accounting for rounding} \\
+											\hspace{1em}\phi^n                                    & \geq (10^{d-1} - 0.5) \cdot \sqrt{5} \\
+											\hspace{1em}log\left(\phi^n\right)                    & \geq log\left((10^{d-1} - 0.5)) \cdot \sqrt{5}\right) \\
+											\hspace{1em}n \cdot log(\phi)                         & \geq log\left(10^{d-1}-0.5\right) + \frac{1}{2}\cdot log(5) \\
+											\hspace{1em}n                                         & \geq \frac{log\left(10^{d-1}-0.5\right) + \frac{1}{2}\cdot log(5)}{log(\phi)} \\
+											\hspace{1em}n_{min}                                   & = ceil\left(\frac{log\left(10^{d-1}-0.5\right) + \frac{1}{2}\cdot log(5)}{log(\phi)}\right) & \text{Least possible }n \\
+											\hspace{1em}n_{min}                                   & = ceil\left(\frac{log\left(10^{d-1}\right) + \frac{1}{2}\cdot log(5)}{log(\phi)}\right) & \text{Simplifying approximation} \\
+											\hspace{1em}n_{min}                                   & = ceil\left(\frac{log_{10}\left(10^{d-1}\right) + \frac{1}{2}\cdot log_{10}(5)}{log_{10}(\phi)}\right) & \text{Explicitly use log base-}10 \\
+											\hspace{1em}n_{min}                                   & = ceil\left(\frac{(d-1) + \frac{1}{2}\cdot log_{10}(5)}{log_{10}(\phi)}\right) \\
+										\end{align*}
+									\)<br/><br/>
+									Since we've reduced this to a finite set of arithmetic operations, the time-complexity is essentially \(O(1)\).
+								</p>
+							</section>
+							<hr/>
+							<section>
+								<header>
+									<h3>Answer</h3>
+								</header>
+								<p>
+									We can plug into the final formula to obtain the following:<br/><br/>
+									\(
+										\begin{align*}
+											\hspace{1em}n_{min} &= ceil\left(\frac{(d-1) + \frac{1}{2}\cdot log_{10}(5)}{log_{10}(\phi)}\right) \\
+											\hspace{1em}        &= ceil\left(\frac{(1000-1) + \frac{1}{2}\cdot log_{10}(5)}{log_{10}(\phi)}\right) \\
+											\hspace{1em}        &= ceil(4,781.859\cdots) \\
+											\hspace{1em}        &= 4,782 \\
+										\end{align*}
+									\)
+								</p>
+							</section>
+							<hr/>
+							<section>
+								<header>
+									<h3>My Solution on GitHub</h3>
+								</header>
+								<p>
+									The full Python3 code for my solution implementation can be found here:
+									<a href="https://github.com/mihiryerande/project-euler-025">GitHub Solution</a>
+								</p>
 							</section>
 						</article>
 					</div>
